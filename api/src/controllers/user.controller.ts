@@ -22,7 +22,12 @@ import {UserRepository} from '../repositories';
 import {config, service} from '@loopback/core';
 import {AuthService} from '../services';
 import axios from 'axios';
-import { configuracion } from '../config/config';
+import {configuracion} from '../config/config';
+import {Credenciales} from '../models';
+import {HttpErrors} from '@loopback/rest';
+import { authenticate } from '@loopback/authentication';
+
+@authenticate("admin")
 export class UserController {
   constructor(
     @repository(UserRepository)
@@ -31,6 +36,39 @@ export class UserController {
     public servicioAuth: AuthService
   ) {}
 
+   
+  //Servicio de login
+  @authenticate.skip()
+  @post('/login', {
+    responses: {
+      '200': {
+        description: 'Identificación de usuarios'
+      }
+    }
+  })
+  async login(
+    @requestBody() credenciales: Credenciales
+  ) {
+    let usuario = await this.servicioAuth.identificarPersona(credenciales.User, credenciales.Password);
+    if (usuario) {
+      let token = this.servicioAuth.generarTokenJWT(usuario);
+ 
+      return {
+        status: "success",
+        data: {
+          nombre: usuario.Nombre,
+          apellidos: usuario.Apellido,
+          correo: usuario.Correo,
+          id: usuario.id
+        },
+        token: token
+      }
+    } else {
+      throw new HttpErrors[401]("Datos invalidos")
+    }
+  }
+  
+  @authenticate.skip()
   @post('/user')
   @response(200, {
     description: 'User model instance',

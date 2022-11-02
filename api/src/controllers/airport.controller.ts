@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {Airport} from '../models';
 import {AirportRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
+@authenticate("admin")
 export class AirportController {
   constructor(
     @repository(AirportRepository)

@@ -19,7 +19,9 @@ import {
 } from '@loopback/rest';
 import {Routes} from '../models';
 import {RoutesRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
 
+@authenticate("admin")
 export class RoutesController {
   constructor(
     @repository(RoutesRepository)

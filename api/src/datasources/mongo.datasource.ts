@@ -4,7 +4,8 @@ import { configuracion } from '../config/config';
 
 const config = {
   name: 'Mongo',
-  connector: configuracion.cadenaBD,
+  connector: "mongodb",
+  url: configuracion.cadenaBD,
   host: '',
   port: 0,
   user: '',
